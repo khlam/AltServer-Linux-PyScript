@@ -344,7 +344,10 @@ class Netmuxd:
 
 def getSUDO():
     output = ""
-    password = ""
+    password = os.environ.get('SUDO_PASSWORD', '')
+    if not password:
+        print("Sudo password not set in environment variable 'SUDO_PASSWORD'.")
+        exit(-1)
     if os.geteuid() != 0:
         while output[:-1] != "0000":
             password = getpass.getpass("Enter sudo password : ")
@@ -398,12 +401,16 @@ class InstallationManager:
             self.selectedDevice = None
 
     def getAccount(self):
-        ac = getAnswer("Enter your Apple ID : ")
-        self.account = ac
+        self.account = os.environ.get('APPLE_ID', '')
+        if not self.account:
+            print("Apple ID not set in environment variable 'APPLE_ID'.")
+            exit(-1)
 
     def getPassword(self):
-        pd = getpass.getpass("Enter password of the Apple ID : ")
-        self.password = pd
+        self.password = os.environ.get('APPLE_ID_PASSWORD', '')
+        if not self.password:
+            print("Apple ID password not set in environment variable 'APPLE_ID_PASSWORD'.")
+            exit(-1)
 
     def selectFile(self):
         answer = getAnswer(
@@ -429,7 +436,6 @@ class InstallationManager:
 def main():
     if CheckNetworkConnection() == False:
         print("Please connect to network and re-run the script")
-        input("Press enter to exit : ")
         exit(-1)
     CheckResource()
     CheckUpdate()
